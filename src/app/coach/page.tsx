@@ -80,6 +80,15 @@ const announcements = [
   { id: "an2", title: "Regional Championships Roster", content: "Final roster posted. Check your events!", time: "1d ago", pinned: false },
 ];
 
+const workoutTemplates = [
+  { id: "t1", name: "Sprint Day", description: "6×200m at race pace", duration: "45min", icon: "⚡", color: "from-yellow-500/20 to-orange-500/20", borderColor: "border-yellow-500/30" },
+  { id: "t2", name: "Tempo Run", description: "20min at 75% effort", duration: "30min", icon: "🏃", color: "from-blue-500/20 to-cyan-500/20", borderColor: "border-blue-500/30" },
+  { id: "t3", name: "Plyo Session", description: "Box jumps, bounds, hops", duration: "40min", icon: "🐎", color: "from-purple-500/20 to-pink-500/20", borderColor: "border-purple-500/30" },
+  { id: "t4", name: "Strength Training", description: "Lower body focus", duration: "60min", icon: "🧘", color: "from-green-500/20 to-emerald-500/20", borderColor: "border-green-500/30" },
+  { id: "t5", name: "Speed Drills", description: "A-skips, B-skips, high knees", duration: "25min", icon: "🎯", color: "from-red-500/20 to-orange-500/20", borderColor: "border-red-500/30" },
+  { id: "t6", name: "Recovery", description: "Easy jog + stretching", duration: "30min", icon: "🧘", color: "from-teal-500/20 to-cyan-500/20", borderColor: "border-teal-500/30" },
+];
+
 export default function CoachDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -235,6 +244,54 @@ export default function CoachDashboardPage() {
                     <p className="text-white/70 text-sm">{announcement.content}</p>
                   </div>
                 ))}
+              </CardContent>
+            </Card>
+
+            {/* Workout Templates */}
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <Tabs defaultValue="templates" className="w-full">
+                    <TabsList className="bg-white/5 border border-white/10">
+                      <TabsTrigger value="recent" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-white/60">
+                        Recent Workouts
+                      </TabsTrigger>
+                      <TabsTrigger value="assigned" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-white/60">
+                        Assigned
+                      </TabsTrigger>
+                      <TabsTrigger value="templates" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white text-white/60">
+                        Templates
+                      </TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {workoutTemplates.map((template) => (
+                    <div 
+                      key={template.id} 
+                      className={`p-4 rounded-xl bg-gradient-to-br ${template.color} border ${template.borderColor} hover:scale-[1.02] transition-transform cursor-pointer`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{template.icon}</span>
+                          <div>
+                            <h3 className="font-bold text-white">{template.name}</h3>
+                            <p className="text-sm text-white/60">{template.description}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-white/50">{template.duration}</p>
+                          <Button size="sm" className="mt-2 bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1 h-7">
+                            <Zap className="h-3 w-3 mr-1" />
+                            START
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
