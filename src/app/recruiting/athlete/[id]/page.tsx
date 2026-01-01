@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TierBadge } from "@/components/trackverse";
+import { TierBadge, Navbar } from "@/components/trackverse";
 
 // Mock athlete data
 const mockAthleteData = {
@@ -115,9 +115,11 @@ export default function AthleteProfilePage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      
       {/* Header with Cover */}
       <div className="relative">
-        <div className="h-48 bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-500" />
+        <div className="h-32 bg-gradient-to-b from-orange-600/30 to-transparent" />
         
         {/* Back Button */}
         <Link 

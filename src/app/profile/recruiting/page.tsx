@@ -32,7 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TierBadge } from "@/components/trackverse";
+import { TierBadge, Navbar } from "@/components/trackverse";
 
 // Mock athlete's own recruiting data
 const myRecruitingData = {
@@ -99,12 +99,14 @@ export default function MyRecruitingPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-500 py-8">
+      <div className="bg-gradient-to-b from-orange-600/20 to-transparent py-8 border-b border-orange-500/20">
         <div className="max-w-6xl mx-auto px-4">
           <Link 
             href="/profile" 
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-4"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Profile

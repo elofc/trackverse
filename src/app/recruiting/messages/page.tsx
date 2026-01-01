@@ -22,7 +22,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { TierBadge } from "@/components/trackverse";
+import { TierBadge, Navbar } from "@/components/trackverse";
 
 // Mock conversations
 const mockConversations = [
@@ -149,18 +149,20 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-500 py-6">
+      <div className="bg-gradient-to-b from-orange-600/20 to-transparent py-6 border-b border-orange-500/20">
         <div className="max-w-7xl mx-auto px-4">
           <Link 
             href="/recruiting" 
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-3"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-3"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Recruiting
           </Link>
           <h1 className="text-2xl font-bold">Messages</h1>
-          <p className="text-orange-100 text-sm">
+          <p className="text-zinc-400 text-sm">
             {mockConversations.filter(c => c.unread).length} unread conversations
           </p>
         </div>

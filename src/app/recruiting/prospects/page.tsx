@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { TierBadge } from "@/components/trackverse";
+import { TierBadge, Navbar } from "@/components/trackverse";
 
 // Mock prospect lists
 const mockProspectLists = [
@@ -154,12 +154,14 @@ export default function ProspectsPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-500 py-8">
+      <div className="bg-gradient-to-b from-orange-600/20 to-transparent py-8 border-b border-orange-500/20">
         <div className="max-w-7xl mx-auto px-4">
           <Link 
             href="/recruiting" 
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-4"
+            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-4"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Search
@@ -170,7 +172,7 @@ export default function ProspectsPage() {
                 <Star className="w-8 h-8" />
                 My Prospects
               </h1>
-              <p className="text-orange-100 mt-1">
+              <p className="text-zinc-400 mt-1">
                 {mockSavedAthletes.length} saved athletes across {mockProspectLists.length} lists
               </p>
             </div>

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { TierBadge } from "@/components/trackverse";
+import { TierBadge, Navbar } from "@/components/trackverse";
 
 // Mock athlete data for search results
 const mockAthletes = [
@@ -171,8 +171,10 @@ export default function RecruitingPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
+      <Navbar />
+      
       {/* Header */}
-      <div className="bg-gradient-to-r from-orange-600 to-orange-500 py-8">
+      <div className="bg-gradient-to-b from-orange-600/20 to-transparent py-8 border-b border-orange-500/20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
@@ -180,19 +182,19 @@ export default function RecruitingPage() {
                 <Users className="w-8 h-8" />
                 Recruiting Hub
               </h1>
-              <p className="text-orange-100 mt-1">
+              <p className="text-zinc-400 mt-1">
                 Discover and connect with top track & field talent
               </p>
             </div>
             <div className="flex gap-3">
               <Link href="/recruiting/prospects">
-                <Button variant="outline" className="bg-white/10 border-white/20 hover:bg-white/20">
+                <Button variant="outline" className="border-orange-500/30 hover:bg-orange-500/10 text-white">
                   <Bookmark className="w-4 h-4 mr-2" />
                   My Prospects ({savedAthletes.length})
                 </Button>
               </Link>
               <Link href="/recruiting/messages">
-                <Button variant="outline" className="bg-white/10 border-white/20 hover:bg-white/20">
+                <Button variant="outline" className="border-orange-500/30 hover:bg-orange-500/10 text-white">
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Messages
                 </Button>
