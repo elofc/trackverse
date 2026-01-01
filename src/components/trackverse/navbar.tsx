@@ -14,15 +14,18 @@ import {
   X,
   Search,
   Flame,
+  GraduationCap,
+  ClipboardList,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
-  { href: "/dashboard", label: "Feed", icon: Home },
+  { href: "/feed", label: "Feed", icon: Home },
   { href: "/rankings", label: "Rankings", icon: Trophy },
   { href: "/training", label: "Training", icon: Dumbbell },
   { href: "/meets", label: "Meets", icon: Calendar },
-  { href: "/community", label: "Community", icon: Users },
+  { href: "/recruiting", label: "Recruiting", icon: GraduationCap },
+  { href: "/coach", label: "Coach", icon: ClipboardList },
 ];
 
 export function Navbar() {
