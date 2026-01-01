@@ -1,26 +1,252 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* TRACK & FIELD AUTHENTIC THEME */
+  /* The burnt orange of the track surface, the intensity of competition */
+  
+  --color-background: hsl(0 0% 3%);
+  --color-foreground: hsl(0 0% 98%);
+  --color-card: hsl(0 0% 7%);
+  --color-card-foreground: hsl(0 0% 98%);
+  --color-popover: hsl(0 0% 7%);
+  --color-popover-foreground: hsl(0 0% 98%);
+  
+  /* PRIMARY: Track Orange - The iconic burnt orange/red of the track surface */
+  --color-primary: hsl(14 100% 57%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  
+  /* SECONDARY: Starting Line Red - Aggressive, intense */
+  --color-secondary: hsl(355 82% 56%);
+  --color-secondary-foreground: hsl(0 0% 100%);
+  
+  --color-muted: hsl(0 0% 12%);
+  --color-muted-foreground: hsl(0 0% 60%);
+  
+  /* ACCENT: Gold - For PRs, achievements, victories */
+  --color-accent: hsl(45 100% 58%);
+  --color-accent-foreground: hsl(0 0% 0%);
+  
+  --color-destructive: hsl(0 85% 55%);
+  --color-destructive-foreground: hsl(0 0% 100%);
+  --color-border: hsl(0 0% 15%);
+  --color-input: hsl(0 0% 12%);
+  --color-ring: hsl(14 100% 57%);
+  --radius: 0.75rem;
+  
+  /* TRACK COLORS - Authentic to the sport */
+  --color-track-orange: hsl(14 100% 57%);
+  --color-track-red: hsl(355 82% 56%);
+  --color-track-gold: hsl(45 100% 58%);
+  --color-track-black: hsl(0 0% 5%);
+  
+  /* Achievement Colors */
+  --color-gold: hsl(45 100% 58%);
+  --color-silver: hsl(0 0% 75%);
+  --color-bronze: hsl(30 60% 50%);
+  
+  /* Tier Colors - Heat levels */
+  --color-success: hsl(142 70% 45%);
+  --color-warning: hsl(45 100% 58%);
+  --color-danger: hsl(355 82% 56%);
+  --color-info: hsl(200 80% 50%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  border-color: var(--color-border);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* TikTok-style scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
+
+/* Custom utility classes */
+.time-display {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--color-track-gold);
+  text-shadow: 0 0 20px rgba(255, 210, 63, 0.5);
+}
+
+.rank-display {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-track-orange), var(--color-track-red), var(--color-track-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.track-glow {
+  text-shadow: 
+    0 0 10px var(--color-track-orange),
+    0 0 20px var(--color-track-orange),
+    0 0 40px var(--color-track-orange);
+}
+
+.gold-glow {
+  text-shadow: 
+    0 0 10px var(--color-track-gold),
+    0 0 20px var(--color-track-gold),
+    0 0 30px var(--color-track-gold);
+}
+
+.glass {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.5),
+    0 0 30px -10px var(--color-track-orange);
+}
+
+/* Track surface texture overlay */
+.track-surface {
+  background: 
+    linear-gradient(135deg, var(--color-track-orange) 0%, var(--color-track-red) 100%);
+}
+
+/* Animated gradient border - Track colors */
+.gradient-border {
+  position: relative;
+  background: var(--color-card);
+  border-radius: var(--radius);
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius) + 2px);
+  background: linear-gradient(135deg, var(--color-track-orange), var(--color-track-red), var(--color-track-gold), var(--color-track-orange));
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+  z-index: -1;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Pulse animation for live elements */
+.pulse-live {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Shimmer effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 107, 53, 0.2),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Fire emoji animation for streaks */
+.fire-animate {
+  animation: fire-bounce 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes fire-bounce {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-3px) scale(1.1); }
+}
+
+/* Track Orange Button - The main CTA */
+.btn-track {
+  background: linear-gradient(135deg, var(--color-track-orange), var(--color-track-red));
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-track:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px var(--color-track-orange);
+}
+
+/* Gold Button - For achievements/PRs */
+.btn-gold {
+  background: linear-gradient(135deg, var(--color-track-gold), hsl(35 100% 50%));
+  color: black;
+  font-weight: 800;
+}
+
+.btn-gold:hover {
+  box-shadow: 0 0 30px var(--color-track-gold);
+}
+
+/* Starting blocks animation */
+.starting-blocks {
+  animation: ready-set-go 0.3s ease-out;
+}
+
+@keyframes ready-set-go {
+  0% { transform: translateX(-10px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Lane lines */
+.lane-lines {
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.1) 20px,
+    rgba(255, 255, 255, 0.1) 21px
+  );
 }

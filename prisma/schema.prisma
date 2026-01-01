@@ -1,0 +1,979 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================
+// USERS & AUTHENTICATION
+// =============================================
+
+model User {
+  id                  String   @id @default(cuid())
+  email               String   @unique
+  role                Role     @default(ATHLETE)
+  createdAt           DateTime @default(now())
+  lastActive          DateTime @default(now())
+  emailVerified       Boolean  @default(false)
+  onboardingCompleted Boolean  @default(false)
+
+  athleteProfile AthleteProfile?
+  coachProfile   CoachProfile?
+  scoutProfile   ScoutProfile?
+
+  personalRecords   PersonalRecord[]
+  workouts          Workout[]
+  posts             Post[]
+  comments          Comment[]
+  likes             PostLike[]
+  followers         Follow[]         @relation("following")
+  following         Follow[]         @relation("follower")
+  notifications     Notification[]
+  sentMessages      Message[]
+  conversations     ConversationParticipant[]
+  injuries          Injury[]
+  sorenessLogs      SorenessLog[]
+  achievements      UserAchievement[]
+  challengeParticipations ChallengeParticipant[]
+  referralCode      ReferralCode?
+  referredBy        Referral?        @relation("referred")
+  referrals         Referral[]       @relation("referrer")
+  teamMemberships   TeamMember[]
+  verifiedRecords   PersonalRecord[] @relation("verifier")
+  verifiedResults   MeetResult[]     @relation("resultVerifier")
+  assignedWorkouts  AssignedWorkout[] @relation("assignedTo")
+  createdWorkouts   AssignedWorkout[] @relation("assignedBy")
+  workoutTemplates  WorkoutTemplate[]
+
+  @@map("users")
+}
+
+enum Role {
+  ATHLETE
+  COACH
+  SCOUT
+  ADMIN
+}
+
+model AthleteProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  displayName     String
+  bio             String?
+  avatarUrl       String?
+  coverImageUrl   String?
+  heightInches    Int?
+  weightLbs       Int?
+  gradYear        Int?
+  
+  schoolId        String?
+  school          School?  @relation(fields: [schoolId], references: [id])
+  
+  rankTier        Tier     @default(ROOKIE)
+  rankPoints      Int      @default(0)
+  
+  verificationLevel VerificationLevel @default(UNVERIFIED)
+  
+  totalPrs        Int      @default(0)
+  totalWorkouts   Int      @default(0)
+  currentStreak   Int      @default(0)
+  longestStreak   Int      @default(0)
+  
+  badges          Json     @default("[]")
+  
+  profileVisibility Visibility @default(PUBLIC)
+  recruitingStatus  RecruitingStatus @default(OPEN)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  rankings        Ranking[]
+
+  @@map("athlete_profiles")
+}
+
+enum Tier {
+  ROOKIE
+  JV
+  VARSITY
+  ELITE
+  ALL_STATE
+  NATIONAL
+  WORLD_CLASS
+  GODSPEED
+}
+
+enum VerificationLevel {
+  UNVERIFIED
+  EMAIL_VERIFIED
+  COACH_VERIFIED
+  FULLY_VERIFIED
+}
+
+enum Visibility {
+  PUBLIC
+  FOLLOWERS
+  TEAM
+  PRIVATE
+}
+
+enum RecruitingStatus {
+  OPEN
+  COLLEGE_COACHES_ONLY
+  INVITED_ONLY
+  CLOSED
+}
+
+model CoachProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  displayName String
+  title       String?
+  bio         String?
+  avatarUrl   String?
+  verified    Boolean  @default(false)
+  
+  schoolId    String?
+  school      School?  @relation(fields: [schoolId], references: [id])
+  
+  teams       Team[]
+  
+  createdAt   DateTime @default(now())
+
+  @@map("coach_profiles")
+}
+
+model ScoutProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  displayName  String
+  organization String?
+  title        String?
+  verified     Boolean  @default(false)
+  
+  createdAt    DateTime @default(now())
+
+  @@map("scout_profiles")
+}
+
+// =============================================
+// SCHOOLS & TEAMS
+// =============================================
+
+model School {
+  id             String   @id @default(cuid())
+  name           String
+  city           String?
+  state          String?
+  country        String   @default("USA")
+  division       String?
+  conference     String?
+  mascot         String?
+  primaryColor   String?
+  secondaryColor String?
+  logoUrl        String?
+  
+  createdAt      DateTime @default(now())
+
+  athleteProfiles AthleteProfile[]
+  coachProfiles   CoachProfile[]
+  teams           Team[]
+  hostedMeets     Meet[]
+  relayTeams      RelayTeam[]
+
+  @@map("schools")
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  
+  name      String
+  season    Season?
+  year      Int?
+  
+  coachId   String?
+  coach     CoachProfile? @relation(fields: [coachId], references: [id])
+  
+  members   TeamMember[]
+  assignedWorkouts AssignedWorkout[]
+  
+  createdAt DateTime @default(now())
+
+  @@map("teams")
+}
+
+enum Season {
+  INDOOR
+  OUTDOOR
+  CROSS_COUNTRY
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  
+  athleteId String
+  athlete   User     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  role      String   @default("athlete")
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, athleteId])
+  @@map("team_members")
+}
+
+// =============================================
+// EVENTS & PERSONAL RECORDS
+// =============================================
+
+model Event {
+  id            String   @id @default(cuid())
+  name          String
+  shortName     String
+  category      EventCategory
+  distanceMeters Int?
+  isFieldEvent  Boolean  @default(false)
+  isRelay       Boolean  @default(false)
+  unit          EventUnit @default(TIME)
+  gender        Gender?
+  sortOrder     Int?
+
+  personalRecords PersonalRecord[]
+  rankings        Ranking[]
+  meetResults     MeetResult[]
+  tierThresholds  TierThreshold[]
+  relayTeams      RelayTeam[]
+  posts           Post[]
+
+  @@map("events")
+}
+
+enum EventCategory {
+  SPRINT
+  DISTANCE
+  HURDLES
+  JUMPS
+  THROWS
+  RELAY
+}
+
+enum EventUnit {
+  TIME
+  DISTANCE
+  HEIGHT
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+}
+
+model PersonalRecord {
+  id          String   @id @default(cuid())
+  athleteId   String
+  athlete     User     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  
+  timeMs      Int?
+  distanceCm  Int?
+  heightCm    Int?
+  
+  meetId      String?
+  meet        Meet?    @relation(fields: [meetId], references: [id])
+  
+  location    String?
+  conditions  String?
+  windSpeed   Float?
+  
+  verificationStatus VerificationStatus @default(PENDING)
+  videoUrl    String?
+  verifiedById String?
+  verifiedBy  User?    @relation("verifier", fields: [verifiedById], references: [id])
+  verifiedAt  DateTime?
+  
+  loggedAt    DateTime @default(now())
+  isCurrentPr Boolean  @default(true)
+  season      String?
+  
+  createdAt   DateTime @default(now())
+
+  posts       Post[]
+
+  @@map("personal_records")
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// =============================================
+// RANKINGS
+// =============================================
+
+model Ranking {
+  id          String   @id @default(cuid())
+  athleteId   String
+  athlete     AthleteProfile @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  
+  scopeType   ScopeType
+  scopeId     String?
+  
+  rankPosition Int
+  rankPoints   Int      @default(0)
+  tier         Tier?
+  
+  bestTimeMs   Int?
+  bestDistanceCm Int?
+  
+  previousRank Int?
+  rankChange   Int      @default(0)
+  
+  season       String?
+  updatedAt    DateTime @updatedAt
+
+  @@unique([athleteId, eventId, scopeType, scopeId, season])
+  @@map("rankings")
+}
+
+enum ScopeType {
+  SCHOOL
+  STATE
+  NATIONAL
+  CLASS_YEAR
+}
+
+model TierThreshold {
+  id          String   @id @default(cuid())
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  
+  gender      Gender?
+  tier        Tier
+  minTimeMs   Int?
+  maxTimeMs   Int?
+  minDistanceCm Int?
+  maxDistanceCm Int?
+
+  @@map("tier_thresholds")
+}
+
+// =============================================
+// MEETS & RESULTS
+// =============================================
+
+model Meet {
+  id            String   @id @default(cuid())
+  name          String
+  location      String?
+  venue         String?
+  city          String?
+  state         String?
+  
+  startDate     DateTime
+  endDate       DateTime?
+  
+  meetType      MeetType?
+  level         MeetLevel?
+  
+  hostSchoolId  String?
+  hostSchool    School?  @relation(fields: [hostSchoolId], references: [id])
+  
+  status        MeetStatus @default(UPCOMING)
+  resultsVerified Boolean @default(false)
+  resultsUrl    String?
+  
+  createdAt     DateTime @default(now())
+
+  results       MeetResult[]
+  personalRecords PersonalRecord[]
+  posts         Post[]
+
+  @@map("meets")
+}
+
+enum MeetType {
+  DUAL
+  INVITATIONAL
+  CHAMPIONSHIP
+  CONFERENCE
+}
+
+enum MeetLevel {
+  HIGH_SCHOOL
+  CLUB
+  COLLEGE
+  OPEN
+}
+
+enum MeetStatus {
+  UPCOMING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model MeetResult {
+  id          String   @id @default(cuid())
+  meetId      String
+  meet        Meet     @relation(fields: [meetId], references: [id], onDelete: Cascade)
+  
+  athleteId   String
+  eventId     String
+  event       Event    @relation(fields: [eventId], references: [id])
+  
+  timeMs      Int?
+  distanceCm  Int?
+  heightCm    Int?
+  
+  heat        Int?
+  lane        Int?
+  place       Int?
+  
+  windSpeed   Float?
+  isWindLegal Boolean  @default(true)
+  
+  verificationStatus VerificationStatus @default(PENDING)
+  verifiedById String?
+  verifiedBy  User?    @relation("resultVerifier", fields: [verifiedById], references: [id])
+  
+  isPr        Boolean  @default(false)
+  isSeasonBest Boolean @default(false)
+  
+  createdAt   DateTime @default(now())
+
+  posts       Post[]
+
+  @@map("meet_results")
+}
+
+// =============================================
+// TRAINING & WORKOUTS
+// =============================================
+
+model Workout {
+  id          String   @id @default(cuid())
+  athleteId   String
+  athlete     User     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  workoutType WorkoutType
+  title       String?
+  description String?
+  
+  totalDistanceMeters Int?
+  totalDurationMinutes Int?
+  
+  splits      Json?
+  
+  effortRating Int?
+  fatigueScore Int?
+  notes       String?
+  
+  location    String?
+  weather     String?
+  surface     Surface?
+  
+  assignedById String?
+  assignedWorkoutId String?
+  
+  loggedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  posts       Post[]
+
+  @@map("workouts")
+}
+
+enum WorkoutType {
+  SPRINT
+  TEMPO
+  DISTANCE
+  LIFT
+  PLYO
+  RECOVERY
+  DRILLS
+}
+
+enum Surface {
+  TRACK
+  GRASS
+  ROAD
+  TRAIL
+  TREADMILL
+  GYM
+}
+
+model WorkoutTemplate {
+  id          String   @id @default(cuid())
+  createdById String
+  createdBy   User     @relation(fields: [createdById], references: [id])
+  
+  name        String
+  description String?
+  workoutType WorkoutType
+  
+  structure   Json
+  
+  difficulty  String?
+  estimatedDurationMinutes Int?
+  targetEventCategory EventCategory?
+  
+  isPublic    Boolean  @default(false)
+  useCount    Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+
+  assignedWorkouts AssignedWorkout[]
+
+  @@map("workout_templates")
+}
+
+model AssignedWorkout {
+  id          String   @id @default(cuid())
+  coachId     String
+  coach       User     @relation("assignedBy", fields: [coachId], references: [id])
+  
+  athleteId   String?
+  athlete     User?    @relation("assignedTo", fields: [athleteId], references: [id])
+  
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  
+  templateId  String?
+  template    WorkoutTemplate? @relation(fields: [templateId], references: [id])
+  
+  customWorkout Json?
+  
+  title       String?
+  notes       String?
+  
+  dueDate     DateTime?
+  completed   Boolean  @default(false)
+  completedWorkoutId String?
+  
+  createdAt   DateTime @default(now())
+
+  @@map("assigned_workouts")
+}
+
+// =============================================
+// INJURY & RECOVERY
+// =============================================
+
+model Injury {
+  id          String   @id @default(cuid())
+  athleteId   String
+  athlete     User     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  bodyPart    String
+  injuryType  String?
+  severity    InjurySeverity?
+  
+  description String?
+  
+  injuryDate  DateTime?
+  recoveryStartDate DateTime?
+  expectedReturnDate DateTime?
+  actualReturnDate DateTime?
+  
+  status      InjuryStatus @default(ACTIVE)
+  
+  createdAt   DateTime @default(now())
+
+  @@map("injuries")
+}
+
+enum InjurySeverity {
+  MINOR
+  MODERATE
+  SEVERE
+}
+
+enum InjuryStatus {
+  ACTIVE
+  RECOVERING
+  RESOLVED
+}
+
+model SorenessLog {
+  id        String   @id @default(cuid())
+  athleteId String
+  athlete   User     @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  
+  bodyPart  String
+  severity  Int
+  notes     String?
+  
+  loggedAt  DateTime @default(now())
+
+  @@map("soreness_logs")
+}
+
+// =============================================
+// SOCIAL FEED
+// =============================================
+
+model Post {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  contentType PostType
+  contentText String?
+  mediaUrls   Json     @default("[]")
+  
+  workoutId   String?
+  workout     Workout? @relation(fields: [workoutId], references: [id])
+  
+  prId        String?
+  pr          PersonalRecord? @relation(fields: [prId], references: [id])
+  
+  meetResultId String?
+  meetResult  MeetResult? @relation(fields: [meetResultId], references: [id])
+  
+  eventId     String?
+  event       Event?   @relation(fields: [eventId], references: [id])
+  
+  meetId      String?
+  meet        Meet?    @relation(fields: [meetId], references: [id])
+  
+  likesCount    Int    @default(0)
+  commentsCount Int    @default(0)
+  sharesCount   Int    @default(0)
+  
+  visibility  Visibility @default(PUBLIC)
+  
+  isFlagged   Boolean  @default(false)
+  isHidden    Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  likes       PostLike[]
+  comments    Comment[]
+
+  @@map("posts")
+}
+
+enum PostType {
+  TEXT
+  WORKOUT
+  PR
+  MEET_RESULT
+  VIDEO
+  PHOTO
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@map("post_likes")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  parentId  String?
+  parent    Comment? @relation("replies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("replies")
+  
+  content   String
+  
+  likesCount Int     @default(0)
+  
+  isFlagged Boolean  @default(false)
+  isHidden  Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comments")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  
+  followingId String
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+// =============================================
+// NOTIFICATIONS
+// =============================================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type      NotificationType
+  title     String?
+  body      String?
+  
+  relatedUserId String?
+  relatedPostId String?
+  relatedPrId   String?
+  
+  data      Json?
+  
+  isRead    Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
+}
+
+enum NotificationType {
+  RANK_CHANGE
+  NEW_FOLLOWER
+  LIKE
+  COMMENT
+  MENTION
+  PR_VERIFIED
+  WORKOUT_ASSIGNED
+  MEET_REMINDER
+  ACHIEVEMENT_UNLOCKED
+}
+
+// =============================================
+// MESSAGING
+// =============================================
+
+model Conversation {
+  id        String   @id @default(cuid())
+  type      ConversationType @default(DIRECT)
+  name      String?
+  
+  createdAt DateTime @default(now())
+
+  participants ConversationParticipant[]
+  messages     Message[]
+
+  @@map("conversations")
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+model ConversationParticipant {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lastReadAt     DateTime?
+
+  @@unique([conversationId, userId])
+  @@map("conversation_participants")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  senderId       String
+  sender         User     @relation(fields: [senderId], references: [id])
+  
+  content        String
+  
+  isRead         Boolean  @default(false)
+  
+  createdAt      DateTime @default(now())
+
+  @@map("messages")
+}
+
+// =============================================
+// RELAY TEAMS
+// =============================================
+
+model RelayTeam {
+  id        String   @id @default(cuid())
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id])
+  
+  name      String?
+  athletes  Json
+  
+  bestTimeMs Int?
+  season    String?
+  
+  splits    Json?
+  
+  verified  Boolean  @default(false)
+  
+  createdAt DateTime @default(now())
+
+  @@map("relay_teams")
+}
+
+// =============================================
+// GAMIFICATION
+// =============================================
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  icon        String?
+  category    AchievementCategory
+  
+  criteria    Json
+  
+  points      Int      @default(0)
+  rarity      Rarity   @default(COMMON)
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+enum AchievementCategory {
+  TRAINING
+  SOCIAL
+  COMPETITION
+  MILESTONE
+}
+
+enum Rarity {
+  COMMON
+  RARE
+  EPIC
+  LEGENDARY
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  
+  unlockedAt    DateTime @default(now())
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model Challenge {
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  
+  challengeType ChallengeType
+  targetValue   Int?
+  unit          String?
+  
+  startDate     DateTime?
+  endDate       DateTime?
+  
+  createdAt     DateTime @default(now())
+
+  participants  ChallengeParticipant[]
+
+  @@map("challenges")
+}
+
+enum ChallengeType {
+  DISTANCE
+  WORKOUTS
+  IMPROVEMENT
+  STREAK
+}
+
+model ChallengeParticipant {
+  id           String   @id @default(cuid())
+  challengeId  String
+  challenge    Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  currentValue Int      @default(0)
+  completed    Boolean  @default(false)
+  completedAt  DateTime?
+  
+  joinedAt     DateTime @default(now())
+
+  @@unique([challengeId, userId])
+  @@map("challenge_participants")
+}
+
+// =============================================
+// REFERRALS
+// =============================================
+
+model ReferralCode {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  code      String   @unique
+  uses      Int      @default(0)
+  
+  createdAt DateTime @default(now())
+
+  @@map("referral_codes")
+}
+
+model Referral {
+  id         String   @id @default(cuid())
+  referrerId String
+  referrer   User     @relation("referrer", fields: [referrerId], references: [id])
+  
+  referredId String   @unique
+  referred   User     @relation("referred", fields: [referredId], references: [id])
+  
+  codeUsed   String?
+  
+  createdAt  DateTime @default(now())
+
+  @@map("referrals")
+}
