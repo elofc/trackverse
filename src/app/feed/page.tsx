@@ -80,7 +80,7 @@ const mockPosts: Post[] = [
     id: "p1",
     author: {
       id: "u1",
-      name: "Jaylen Thompson",
+      name: "Elias Bolt",
       username: "flashjaylen",
       avatar: "/avatars/jaylen.jpg",
       school: "Lincoln HS",

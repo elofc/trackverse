@@ -49,7 +49,7 @@ const teamData = {
 };
 
 const recentActivity = [
-  { id: "a1", type: "pr", athlete: "Jaylen Thompson", event: "100m", value: "10.15", time: "2h ago" },
+  { id: "a1", type: "pr", athlete: "Elias Bolt", event: "100m", value: "10.15", time: "2h ago" },
   { id: "a2", type: "workout", athlete: "Maya Rodriguez", workout: "Sprint Intervals", time: "3h ago" },
   { id: "a3", type: "submission", athlete: "Marcus Johnson", assignment: "Tempo Run", time: "4h ago" },
   { id: "a4", type: "pr", athlete: "Sarah Chen", event: "Long Jump", value: "18' 6\"", time: "5h ago" },
@@ -57,7 +57,7 @@ const recentActivity = [
 ];
 
 const topAthletes = [
-  { id: "u1", name: "Jaylen Thompson", events: ["100m", "200m"], tier: "GODSPEED" as Tier, prs: 3, streak: 14 },
+  { id: "u1", name: "Elias Bolt", events: ["100m", "200m"], tier: "GODSPEED" as Tier, prs: 3, streak: 14 },
   { id: "u2", name: "Marcus Johnson", events: ["200m", "400m"], tier: "WORLD_CLASS" as Tier, prs: 2, streak: 12 },
   { id: "u3", name: "Maya Rodriguez", events: ["100m", "200m"], tier: "ELITE" as Tier, prs: 1, streak: 10 },
   { id: "u4", name: "Sarah Chen", events: ["Long Jump", "Triple Jump"], tier: "ALL_STATE" as Tier, prs: 2, streak: 8 },

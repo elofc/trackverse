@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const athletes = [
   {
     id: "1",
-    name: "Jaylen Thompson",
+    name: "Elias Bolt",
     school: "Lincoln High School",
     location: "Springfield, OR",
     state: "OR",

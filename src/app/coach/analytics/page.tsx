@@ -56,7 +56,7 @@ const weeklyProgress = [
 ];
 
 const topPerformers = [
-  { id: "u1", name: "Jaylen Thompson", prs: 5, completionRate: 98, improvement: "+12%", tier: "GODSPEED" as Tier },
+  { id: "u1", name: "Elias Bolt", prs: 5, completionRate: 98, improvement: "+12%", tier: "GODSPEED" as Tier },
   { id: "u2", name: "Marcus Johnson", prs: 4, completionRate: 95, improvement: "+8%", tier: "WORLD_CLASS" as Tier },
   { id: "u3", name: "Sarah Chen", prs: 4, completionRate: 94, improvement: "+15%", tier: "ALL_STATE" as Tier },
   { id: "u4", name: "Tyler Smith", prs: 3, completionRate: 97, improvement: "+6%", tier: "NATIONAL" as Tier },

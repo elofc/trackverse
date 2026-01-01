@@ -15,7 +15,7 @@ const teamData = {
 const athletes = [
   {
     id: "u1",
-    name: "Jaylen Thompson",
+    name: "Elias Bolt",
     email: "jaylen.t@school.edu",
     grade: 12,
     events: ["100m", "200m"],

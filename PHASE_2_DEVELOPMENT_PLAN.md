@@ -59,7 +59,7 @@ Help athletes get discovered by college scouts while giving scouts powerful tool
 #### Auto-Generated Recruiting Profile
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  🏃 JAYLEN THOMPSON                              [GODSPEED] │
+│  🏃 ELIAS BOLT                              [GODSPEED] │
 │  Lincoln High School • Class of 2025 • Springfield, OR     │
 │                                                             │
 │  ══════════════════════════════════════════════════════════ │

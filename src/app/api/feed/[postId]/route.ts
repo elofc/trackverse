@@ -12,7 +12,7 @@ export async function GET(
     id: postId,
     authorId: "u1",
     author: {
-      name: "Jaylen Thompson",
+      name: "Elias Bolt",
       username: "flashjaylen",
       school: "Lincoln HS",
       tier: "GODSPEED",

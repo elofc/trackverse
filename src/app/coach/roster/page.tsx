@@ -59,7 +59,7 @@ interface Athlete {
 const mockAthletes: Athlete[] = [
   {
     id: "u1",
-    name: "Jaylen Thompson",
+    name: "Elias Bolt",
     email: "jaylen.t@school.edu",
     phone: "(555) 123-4567",
     grade: 12,

@@ -63,7 +63,7 @@ const meetData = {
       { event: "4x100m", seedTime: "43.50", leg: 2 },
     ],
     topAthletes: [
-      { name: "Jaylen Thompson", school: "Lincoln HS", event: "100m", time: "10.15", tier: "GODSPEED" as Tier },
+      { name: "Elias Bolt", school: "Lincoln HS", event: "100m", time: "10.15", tier: "GODSPEED" as Tier },
       { name: "Marcus Johnson", school: "Roosevelt HS", event: "100m", time: "10.48", tier: "WORLD_CLASS" as Tier },
       { name: "Tyler Smith", school: "Jefferson HS", event: "200m", time: "20.45", tier: "GODSPEED" as Tier },
     ],

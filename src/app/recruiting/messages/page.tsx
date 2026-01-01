@@ -29,7 +29,7 @@ const mockConversations = [
   {
     id: "1",
     athleteId: "1",
-    athleteName: "Jaylen Thompson",
+    athleteName: "Elias Bolt",
     athleteSchool: "Lincoln High School",
     athleteTier: "GODSPEED" as const,
     lastMessage: "Thank you for reaching out! I'm very interested in learning more about your program.",

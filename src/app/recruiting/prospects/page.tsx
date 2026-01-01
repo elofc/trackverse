@@ -57,7 +57,7 @@ const mockProspectLists = [
 const mockSavedAthletes = [
   {
     id: "1",
-    name: "Jaylen Thompson",
+    name: "Elias Bolt",
     school: "Lincoln High School",
     location: "Springfield, OR",
     gradYear: 2025,

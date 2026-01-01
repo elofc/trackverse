@@ -6,7 +6,7 @@ const posts = [
     id: "p1",
     authorId: "u1",
     author: {
-      name: "Jaylen Thompson",
+      name: "Elias Bolt",
       username: "flashjaylen",
       school: "Lincoln HS",
       tier: "GODSPEED",
