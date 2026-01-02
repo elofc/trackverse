@@ -16,12 +16,14 @@ import {
   Flame,
   GraduationCap,
   ClipboardList,
+  Swords,
 } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { href: "/feed", label: "Feed", icon: Home },
   { href: "/rankings", label: "Rankings", icon: Trophy },
+  { href: "/ranked", label: "Ranked", icon: Swords },
   { href: "/training", label: "Training", icon: Dumbbell },
   { href: "/meets", label: "Meets", icon: Calendar },
   { href: "/recruiting", label: "Recruiting", icon: GraduationCap },
