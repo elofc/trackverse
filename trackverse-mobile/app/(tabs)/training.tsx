@@ -1,7 +1,13 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Alert } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Dumbbell, Play, Clock, Flame, CheckCircle, Plus, Zap } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Dumbbell, Play, Clock, Flame, CheckCircle, Plus, Zap, Trash2 } from "lucide-react-native";
+import { SwipeableWorkoutItem } from "../../components/SwipeableWorkoutItem";
+import { OfflineBanner } from "../../components/OfflineBanner";
+import { useNetworkStatus } from "../../hooks/useNetworkStatus";
+import { useWorkoutStore } from "../../stores/workoutStore";
 
 type Workout = {
   id: string;
@@ -47,7 +53,13 @@ const getTypeColor = (type: string) => {
 };
 
 export default function TrainingScreen() {
+  const router = useRouter();
+  const { isOffline } = useNetworkStatus();
+  const syncQueueLength = useWorkoutStore((state) => state.syncQueue.length);
+  const streak = useWorkoutStore((state) => state.streak);
+  
   const [completedWorkouts, setCompletedWorkouts] = useState<string[]>(["w1"]);
+  const [workouts, setWorkouts] = useState<Workout[]>(todaysWorkouts);
 
   const toggleComplete = (id: string) => {
     setCompletedWorkouts(prev => 
@@ -55,12 +67,34 @@ export default function TrainingScreen() {
     );
   };
 
+  const handleDelete = (id: string) => {
+    Alert.alert(
+      "Delete Workout",
+      "Are you sure you want to remove this workout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: () => setWorkouts(prev => prev.filter(w => w.id !== id))
+        },
+      ]
+    );
+  };
+
+  const handleEdit = (id: string) => {
+    Alert.alert("Edit Workout", `Long-pressed workout ${id}. Edit functionality coming soon!`);
+  };
+
   const completedCount = completedWorkouts.length;
-  const totalCount = todaysWorkouts.length;
-  const progressPercent = (completedCount / totalCount) * 100;
+  const totalCount = workouts.length;
+  const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaView className="flex-1 bg-zinc-950">
+      {/* Offline Banner */}
+      <OfflineBanner isOffline={isOffline} pendingActions={syncQueueLength} />
       {/* Header */}
       <View className="px-4 py-3 border-b border-zinc-800">
         <View className="flex-row items-center justify-between">
@@ -68,7 +102,10 @@ export default function TrainingScreen() {
             <Dumbbell color="#f97316" size={28} />
             <Text className="text-2xl font-black text-white">Training</Text>
           </View>
-          <Pressable className="bg-orange-500 rounded-full p-2">
+          <Pressable 
+            className="bg-orange-500 rounded-full p-2"
+            onPress={() => router.push("/log-workout" as any)}
+          >
             <Plus color="#fff" size={24} />
           </Pressable>
         </View>
@@ -97,42 +134,20 @@ export default function TrainingScreen() {
           </View>
         </View>
 
-        {/* Today's Workouts */}
-        <View className="px-4 mb-6">
-          <Text className="text-white font-bold text-lg mb-3">Today's Workouts</Text>
-          {todaysWorkouts.map((workout) => {
-            const isCompleted = completedWorkouts.includes(workout.id);
-            return (
-              <Pressable
-                key={workout.id}
-                className={`flex-row items-center p-4 rounded-xl mb-2 border ${
-                  isCompleted ? 'bg-green-500/10 border-green-500/30' : 'bg-zinc-900 border-zinc-800'
-                }`}
-                onPress={() => toggleComplete(workout.id)}
-              >
-                <View 
-                  className={`w-12 h-12 rounded-xl items-center justify-center mr-3`}
-                  style={{ backgroundColor: getTypeColor(workout.type) + "30" }}
-                >
-                  {isCompleted ? (
-                    <CheckCircle color="#22c55e" size={24} />
-                  ) : (
-                    <Play color={getTypeColor(workout.type)} size={24} />
-                  )}
-                </View>
-                <View className="flex-1">
-                  <Text className={`font-bold ${isCompleted ? 'text-zinc-500 line-through' : 'text-white'}`}>
-                    {workout.name}
-                  </Text>
-                  <Text className="text-zinc-500 text-sm">{workout.description}</Text>
-                </View>
-                <View className="flex-row items-center gap-1">
-                  <Clock color="#71717a" size={14} />
-                  <Text className="text-zinc-500 text-sm">{workout.duration}</Text>
-                </View>
-              </Pressable>
-            );
-          })}
+        {/* Today's Workouts - Swipeable */}
+        <View className="mb-6">
+          <Text className="text-white font-bold text-lg mb-3 px-4">Today's Workouts</Text>
+          <Text className="text-zinc-500 text-xs mb-2 px-4">← Swipe right to complete • Swipe left to delete →</Text>
+          {workouts.map((workout) => (
+            <SwipeableWorkoutItem
+              key={workout.id}
+              workout={workout}
+              isCompleted={completedWorkouts.includes(workout.id)}
+              onComplete={toggleComplete}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          ))}
         </View>
 
         {/* Quick Start Templates */}
@@ -164,5 +179,6 @@ export default function TrainingScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }

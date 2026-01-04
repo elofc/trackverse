@@ -10,6 +10,8 @@ React Native mobile app for TrackVerse - the ultimate platform for track & field
 - **State Management**: Zustand + React Query
 - **Icons**: Lucide React Native
 - **Animations**: React Native Reanimated + Gesture Handler
+- **Offline Support**: AsyncStorage + Sync Queue
+- **Push Notifications**: Expo Notifications
 
 ## Getting Started
 
@@ -46,30 +48,63 @@ npm run web
 
 ```
 trackverse-mobile/
-├── app/                    # Expo Router pages
-│   ├── (tabs)/            # Tab navigation screens
-│   │   ├── index.tsx      # Feed screen
-│   │   ├── rankings.tsx   # Rankings screen
-│   │   ├── training.tsx   # Training screen
-│   │   ├── meets.tsx      # Meets screen
-│   │   └── profile.tsx    # Profile screen
-│   ├── _layout.tsx        # Root layout
-│   └── index.tsx          # Entry redirect
-├── assets/                # Images and icons
-├── global.css             # Tailwind CSS
-├── tailwind.config.js     # Tailwind configuration
-├── babel.config.js        # Babel configuration
-├── metro.config.js        # Metro bundler configuration
-└── app.json               # Expo configuration
+├── app/                        # Expo Router pages
+│   ├── (tabs)/                # Tab navigation screens
+│   │   ├── index.tsx          # Feed screen
+│   │   ├── rankings.tsx       # Rankings screen
+│   │   ├── training.tsx       # Training screen (swipeable workouts)
+│   │   ├── meets.tsx          # Meets screen
+│   │   └── profile.tsx        # Profile screen
+│   ├── log-workout.tsx        # Workout logging screen
+│   ├── notifications-settings.tsx  # Notification preferences
+│   ├── _layout.tsx            # Root layout
+│   └── index.tsx              # Entry redirect
+├── components/                # Reusable components
+│   ├── SwipeableWorkoutItem.tsx   # Gesture-based workout item
+│   └── OfflineBanner.tsx      # Offline status indicator
+├── hooks/                     # Custom hooks
+│   ├── useNotifications.ts    # Push notification management
+│   ├── useNetworkStatus.ts    # Online/offline detection
+│   └── useOfflineData.ts      # Offline-first data fetching
+├── stores/                    # Zustand stores
+│   ├── workoutStore.ts        # Workout state + sync queue
+│   └── offlineStore.ts        # Cached data for offline use
+├── assets/                    # Images and icons
+├── global.css                 # Tailwind CSS
+├── tailwind.config.js         # Tailwind configuration
+├── babel.config.js            # Babel configuration
+├── metro.config.js            # Metro bundler configuration
+└── app.json                   # Expo configuration
 ```
 
 ## Features
 
+### Core Screens
 - **Feed**: Social feed with PR celebrations, workout updates, and meet results
 - **Rankings**: Real-time leaderboards by event with tier badges
 - **Training**: Workout logging with templates and progress tracking
 - **Meets**: Meet calendar with event registration and results
 - **Profile**: Personal stats, PRs, and achievements
+
+### Gesture-Based Workout Logging
+- **Swipe right** to mark workout complete
+- **Swipe left** to delete workout
+- **Long press** to edit workout
+- Quick-add exercises from templates
+- RPE (Rate of Perceived Exertion) tracking
+
+### Push Notifications
+- Daily workout reminders (8 AM)
+- Streak warning alerts (8 PM)
+- PR celebrations
+- Matchup results
+- Meet reminders
+
+### Offline Mode
+- Automatic data caching for offline access
+- Sync queue for actions taken while offline
+- Auto-sync when connection restored
+- Visual offline indicator banner
 
 ## Building for Production
 
