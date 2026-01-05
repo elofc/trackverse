@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Swords,
   Radio,
+  Film,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/rankings", label: "Rankings", icon: Trophy },
   { href: "/ranked", label: "Ranked", icon: Swords },
   { href: "/live", label: "Live", icon: Radio },
+  { href: "/video", label: "Video", icon: Film },
   { href: "/training", label: "Training", icon: Dumbbell },
   { href: "/meets", label: "Meets", icon: Calendar },
   { href: "/recruiting", label: "Recruiting", icon: GraduationCap },
