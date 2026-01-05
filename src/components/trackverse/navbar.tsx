@@ -19,6 +19,7 @@ import {
   Swords,
   Radio,
   Film,
+  Medal,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ const navItems = [
   { href: "/feed", label: "Feed", icon: Home },
   { href: "/rankings", label: "Rankings", icon: Trophy },
   { href: "/ranked", label: "Ranked", icon: Swords },
+  { href: "/achievements", label: "Achievements", icon: Medal },
   { href: "/live", label: "Live", icon: Radio },
   { href: "/video", label: "Video", icon: Film },
   { href: "/training", label: "Training", icon: Dumbbell },
