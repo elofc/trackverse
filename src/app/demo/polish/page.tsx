@@ -28,7 +28,7 @@ import {
   LevelUp,
   Toast,
 } from "@/components/ui/celebrations";
-import { AccessibilitySettings } from "@/components/ui/accessibility";
+import { AccessibilitySettings, AccessibilityProvider } from "@/components/ui/accessibility";
 import { Trophy, Flame, Star, Medal } from "lucide-react";
 
 export default function PolishDemoPage() {
@@ -214,7 +214,9 @@ export default function PolishDemoPage() {
         <section className="mb-12">
           <h2 className="text-xl font-bold text-white mb-4">♿ Accessibility</h2>
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-            <AccessibilitySettings />
+            <AccessibilityProvider>
+              <AccessibilitySettings />
+            </AccessibilityProvider>
           </div>
         </section>
 
